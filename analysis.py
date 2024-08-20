@@ -37,27 +37,61 @@ analysis_type = st.sidebar.radio("Choose the analysis", [
     "Player Bowling Profiles"
 ])
 def home_section():
-    st.title("Welcome to the Cricklytics")
-
-    st.write("""
-Hey cricket enthusiast, I am Waseef Khalid Khan. I have developed this Cricklytics to help the coaching staff, players, 
-and cricket enthusiasts to know more about the game than the basic stats. You can check your favorite player's stats, 
-their strengths, and weaknesses here.
-""")
-    st.write("""
-    This dashboard provides in-depth analysis of various aspects of cricket matches. 
-    Use the sidebar to navigate between different analyses such as:
-    - Best Shots by Ground
-    - Batsman Strengths and Weaknesses
-    - Toss Impact on Match Results
-    - Toss and Match Outcome Analysis
-    - Player Batting Profiles
-    - Player Bowling Profile
+    st.markdown(
+        """
+        <style>
+        .blue-bg-white-text {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
     
-    Select any section from the sidebar to get started!
-    """)
-    st.write("**Developed by [Waseef Khalid Khan](https://www.linkedin.com/in/waseef-khalid-khan-366951237)**")
+    st.markdown('<div class="blue-bg-white-text"><h1>Welcome to Cricklytics</h1></div>', unsafe_allow_html=True)
 
+    st.markdown(
+        """
+        <div class="blue-bg-white-text">
+        <p>
+        Hey cricket enthusiast, I am Waseef Khalid Khan. I have developed this Cricklytics to help the coaching staff, players, 
+        and cricket enthusiasts to know more about the game than the basic stats. You can check your favorite player's stats, 
+        their strengths, and weaknesses here.
+        </p>
+        </div>
+        """, unsafe_allow_html=True
+    )
+
+    st.markdown(
+        """
+        <div class="blue-bg-white-text">
+        <p>
+        This dashboard provides in-depth analysis of various aspects of cricket matches. 
+        Use the sidebar to navigate between different analyses such as:
+        </p>
+        <ul>
+            <li>Best Shots by Ground</li>
+            <li>Batsman Strengths and Weaknesses</li>
+            <li>Toss Impact on Match Results</li>
+            <li>Toss and Match Outcome Analysis</li>
+            <li>Player Batting Profiles</li>
+            <li>Player Bowling Profile</li>
+        </ul>
+        <p>Select any section from the sidebar to get started!</p>
+        </div>
+        """, unsafe_allow_html=True
+    )
+
+    st.markdown(
+        """
+        <div class="blue-bg-white-text">
+        <p><strong>Developed by <a href="https://www.linkedin.com/in/waseef-khalid-khan-366951237" style="color:white;">Waseef Khalid Khan</a></strong></p>
+        </div>
+        """, unsafe_allow_html=True
+    )
 
 # Define your analysis functions here
 def effective_shots_on_different_grounds():
