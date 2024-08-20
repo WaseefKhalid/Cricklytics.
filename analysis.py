@@ -123,6 +123,9 @@ def effective_shots_on_different_grounds():
             border-radius: 5px;
             font-weight: bold;
         }
+        .blue-bg-yellow-text h1 {
+            color: #FFD700 !important; /* Force yellow text */
+        }
         </style>
         """,
         unsafe_allow_html=True
@@ -185,7 +188,6 @@ def effective_shots_on_different_grounds():
 
         st.subheader('Dismissal Rate per Shot Type (Percentage)')
         st.bar_chart(shot_analysis.set_index('shot')['dismissal_rate'], use_container_width=True)
-
 
 def line_and_length():
     st.title("Bowling Line and Length Insights")
