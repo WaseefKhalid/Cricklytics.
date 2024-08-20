@@ -414,27 +414,27 @@ def batsman_swot():
             st.dataframe(style_summary_df[['bowl_style', 'batting_avg', 'strike_rate', 'out']])
 
 def toss_and_match_outcome_analysis():
-    # CSS for blue background and white text
+    # CSS for blue background and yellow text
     st.markdown(
         """
         <style>
-        .blue-bg-white-text {
+        .blue-bg-yellow-text {
             background-color: #007BFF; /* Blue background */
-            color: #FFD700; /* White text */
+            color: #FFD700; /* Yellow text */
             padding: 10px;
             border-radius: 5px;
             font-weight: bold;
         }
-        .blue-bg-white-text h1 {
-            color: white !important; /* Force white text */
+        .blue-bg-yellow-text h1 {
+            color: #FFD700 !important; /* Force yellow text */
         }
         </style>
         """,
         unsafe_allow_html=True
     )
 
-    # Title with blue background and white text
-    st.markdown('<div class="blue-bg-white-text"><h1>Toss Impact on Match Results</h1></div>', unsafe_allow_html=True)
+    # Title with blue background and yellow text
+    st.markdown('<div class="blue-bg-yellow-text"><h1>Toss Impact on Match Results</h1></div>', unsafe_allow_html=True)
 
     selected_ground = st.selectbox("Select Ground", options=df['ground'].unique(), key='ground_select')
 
@@ -503,6 +503,7 @@ def toss_and_match_outcome_analysis():
         bowling_analysis = bowling_analysis.drop(columns=['bowlruns', 'ball', 'out'])
 
         st.write('Bowling Analysis:', bowling_analysis)
+
 
 # CSS for sidebar radio buttons
 st.markdown(
