@@ -652,6 +652,16 @@ st.markdown(
     .stRadio div[role=radiogroup] > label {
         width: 100%; /* Uniform width for all options */
     }
+    /* Replace the radio button with an arrow */
+    .stRadio div[role=radiogroup] > label > div {
+        visibility: hidden;
+    }
+    .stRadio div[role=radiogroup] > label:before {
+        content: "➔ "; /* Unicode arrow symbol */
+        visibility: visible;
+        margin-right: 10px;
+        font-size: 18px;
+    }
     </style>
     """,
     unsafe_allow_html=True
