@@ -623,32 +623,34 @@ def bowler_profile_analysis():
 st.markdown(
     """
     <style>
-    /* Custom radio buttons styling */
+    /* Ensure all radio button containers have the same width */
     .stRadio > div {
         display: flex;
         flex-direction: column;
     }
-    .stRadio label {
-        font-size: 16px;
-        margin-bottom: 5px;
-        color: white;
-    }
-    .stRadio div[role=radiogroup] > label:hover {
-        color: #007BFF; /* Blue color on hover */
-    }
     .stRadio div[role=radiogroup] > label {
-        background-color: #333;
+        background-color: #007BFF; /* Blue background color */
+        color: white; /* White text */
         border-radius: 5px;
-        padding: 8px;
-        margin-bottom: 5px;
+        padding: 10px;
+        margin-bottom: 8px;
+        width: 100%;
+        display: block;
+        text-align: left;
+        font-weight: bold;
+        font-size: 16px;
         cursor: pointer;
     }
     .stRadio div[role=radiogroup] > label:hover {
-        background-color: #007BFF; /* Blue color on hover */
+        background-color: #0056b3; /* Darker blue on hover */
     }
     .stRadio div[role=radiogroup] > label > div[aria-checked=true] {
         background-color: #FF5733; /* Active or selected item color */
         color: white;
+    }
+    /* Ensure that the labels have the same width */
+    .stRadio div[role=radiogroup] > label {
+        width: 100%; /* Uniform width for all options */
     }
     </style>
     """,
