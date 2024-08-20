@@ -116,9 +116,9 @@ def effective_shots_on_different_grounds():
     st.markdown(
         """
         <style>
-        .blue-bg-white-text {
-            background-color: #007BFF;
-            color: white;
+        .blue-bg-yellow-text {
+            background-color: #007BFF; /* Blue background */
+            color: #FFD700; /* Yellow text */
             padding: 10px;
             border-radius: 5px;
             font-weight: bold;
@@ -128,8 +128,8 @@ def effective_shots_on_different_grounds():
         unsafe_allow_html=True
     )
 
-    # Title with blue background and white text
-    st.markdown('<div class="blue-bg-white-text"><h1>Best Shots by Ground</h1></div>', unsafe_allow_html=True)
+    # Title with blue background and yellow text
+    st.markdown('<div class="blue-bg-yellow-text"><h1>Best Shots by Ground</h1></div>', unsafe_allow_html=True)
 
     # Selectbox for ground selection
     selected_ground_shot = st.selectbox("Select Ground for Shot Analysis", df['ground'].unique(), key='ground_shot_select_1')
