@@ -37,82 +37,7 @@ def home_section():
             border-radius: 10px;
             font-family: Arial, sans-serif;
         }
-        .cricklytics-title {
-            color: #FFD700; /* Gold color for Cricklytics */
-            font-size: 2.5em;
-            font-weight: bold;
-        }
-        .separator {
-            height: 2px;
-            background-color: white;
-            margin: 20px 0;
-            border: none;
-        }
-        .content {
-            margin-top: 10px;
-            line-height: 1.6;
-            font-size: 1.2em;
-        }
-        .link-style {
-            color: #FFD700;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-    
-    st.markdown(
-        '<div class="blue-bg-white-text">'
-        '<h1 class="cricklytics-title">Welcome to Cricklytics</h1>'
-        '<hr class="separator"/>'
-        '</div>',
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        """
-        <div class="blue-bg-white-text content">
-        <p>
-        Hey cricket enthusiast, I am <strong>Waseef Khalid Khan</strong>. I have developed this <span class="cricklytics-title">Cricklytics</span> to help the coaching staff, players, 
-        and cricket enthusiasts to know more about the game than the basic stats. You can check your favorite player's stats, 
-        their strengths, and weaknesses here.
-        </p>
-        </div>
-        """, unsafe_allow_html=True
-    )
-
-    st.markdown(
-        """
-        <div class="blue-bg-white-text content">
-        <p>
-        This dashboard provides in-depth analysis of various aspects of cricket matches. 
-        Use the sidebar to navigate between different analyses such as:
-        </p>
-        <ul>
-            <li>Best Shots by Ground</li>
-            <li>Batsman Strengths and Weaknesses</li>
-            <li>Toss Impact on Match Results</li>
-            <li>Toss and Match Outcome Analysis</li>
-            <li>Player Batting Profiles</li>
-            <li>Player Bowling Profile</li>
-        </ul>
-        <p>Select any section from the sidebar to get started!</p>
-        </div>
-        """, unsafe_allow_html=True
-    )
-
-    st.markdown(
-        """
-        <div class="blue-bg-white-text content">
-       <p><strong>Developed by <span style="color: black;">Waseef Khalid Khan</span></strong></p>
-        </div>
-        """, unsafe_allow_html=True
-    )
-
-# Define your analysis functions here
-def effective_shots_on_different_grounds():
+def batsman_swot():
     st.markdown(
         """
         <style>
@@ -132,28 +57,121 @@ def effective_shots_on_different_grounds():
     )
 
     # Title with blue background and yellow text
-    st.markdown('<div class="blue-bg-yellow-text"><h1>Best Shots by Ground</h1></div>', unsafe_allow_html=True)
+    st.markdown('<div class="blue-bg-yellow-text"><h1>Batsman Strengths and Weaknesses</h1></div>', unsafe_allow_html=True)
 
-    # Selectbox for ground selection
-    selected_ground_shot = st.selectbox("Select Ground for Shot Analysis", df['ground'].unique(), key='ground_shot_select_1')
+    # Create three columns with the middle one being wider
+    col1, col2, col3 = st.columns([1, 2, 1])
 
-    # Bowling Kind Filter with Activation
-    activate_bowling_kind_filter_shot = st.checkbox("Activate Bowling Kind Filter for Shot Analysis", key='activate_bowling_kind_shot_1')
-    selected_bowling_kinds_shot = None
-    if activate_bowling_kind_filter_shot:
-        selected_bowling_kinds_shot = st.multiselect("Select Bowling Kind for Shot Analysis", df['bowl_kind'].unique(), key='bowling_kind_shot_select_1')
+    with col2:
+        batsman_input = st.text_input('Type to Search Batsman', key='batsman_input_key_swat_1')
 
-    # Bowling Style Filter with Activation
-    activate_bowling_style_filter_shot = st.checkbox("Activate Bowling Style Filter for Shot Analysis", key='activate_bowling_style_shot_1')
-    selected_bowling_styles_shot = None
-    if activate_bowling_style_filter_shot:
-        selected_bowling_styles_shot = st.multiselect("Select Bowling Style for Shot Analysis", df['bowl_style'].unique(), key='bowling_style_shot_select_1')
+        if batsman_input:
+            filtered_batsmen = df['bat'].unique()
+            filtered_batsmen = [b for b in filtered_batsmen if batsman_input.lower() in b.lower()]
+        else:
+            filtered_batsmen = df['bat'].unique()
 
-    # Bat Hand Filter with Activation
-    activate_bat_hand_filter_shot = st.checkbox("Activate Bat Hand Filter for Shot Analysis", key='activate_bat_hand_shot_1')
-    selected_bat_hand_shot = None
-    if activate_bat_hand_filter_shot:
-        selected_bat_hand_shot = st.multiselect("Select Bat Hand for Shot Analysis", df['bat_hand'].unique(), key='bat_hand_shot_select_1')
+        selected_batsman = st.selectbox('Select Batsman', options=filtered_batsmen, key='batsman_selectbox_key_swat_1')
+
+        # Activate/Deactivate Bowling Kind Filter
+        activate_bowling_kind_filter = st.checkbox("Activate Bowling Kind Filter", key='activate_bowling_kind_key_swat_1')
+
+        if activate_bowling_kind_filter:
+            bowling_kind_options = df['bowl_kind'].unique()
+            selected_bowling_kinds = st.multiselect('Select Bowling Kind', options=bowling_kind_options, key='bowling_kind_multiselect_key_swat_1')
+        else:
+            selected_bowling_kinds = df['bowl_kind'].unique()  # If not activated, consider all kinds
+
+        # Activate/Deactivate Bowling Style Filter
+        activate_bowling_style_filter = st.checkbox("Activate Bowling Style Filter", key='activate_bowling_style_key_swat_1')
+
+        if activate_bowling_style_filter:
+            bowling_style_options = df['bowl_style'].unique()
+            selected_bowling_styles = st.multiselect('Select Bowling Style', options=bowling_style_options, key='bowling_style_multiselect_key_swat_1')
+            batsman_filtered_df = df[
+                (df['bat'] == selected_batsman) &
+                (df['bowl_kind'].isin(selected_bowling_kinds)) &
+                (df['bowl_style'].isin(selected_bowling_styles))
+            ]
+        else:
+            batsman_filtered_df = df[
+                (df['bat'] == selected_batsman) &
+                (df['bowl_kind'].isin(selected_bowling_kinds))
+            ]
+
+    # Display stats below the filters
+    if batsman_filtered_df.empty:
+        st.error("No data available for the selected filters.")
+    else:
+        if activate_bowling_style_filter:
+            batsman_analysis = batsman_filtered_df.groupby(['line', 'length', 'bowl_kind', 'bowl_style']).agg({
+                'batruns': 'sum',
+                'ball': 'count',
+                'out': 'sum'
+            }).reset_index()
+        else:
+            batsman_analysis = batsman_filtered_df.groupby(['line', 'length', 'bowl_kind']).agg({
+                'batruns': 'sum',
+                'ball': 'count',
+                'out': 'sum'
+            }).reset_index()
+
+        batsman_analysis['batruns'] = pd.to_numeric(batsman_analysis['batruns'], errors='coerce')
+        batsman_analysis['out'] = pd.to_numeric(batsman_analysis['out'], errors='coerce')
+        batsman_analysis['ball'] = pd.to_numeric(batsman_analysis['ball'], errors='coerce')
+
+        batsman_analysis['out'].replace(0, 1, inplace=True)
+
+        batsman_analysis['batting_avg'] = batsman_analysis.apply(
+            lambda row: row['batruns'] / row['out'], axis=1
+        )
+
+        batsman_analysis['strike_rate'] = batsman_analysis.apply(
+            lambda row: (row['batruns'] / row['ball']) * 100 if pd.notna(row['ball']) and row['ball'] > 0 else np.nan, axis=1
+        )
+
+        batsman_analysis['balls_per_dismissal'] = batsman_analysis.apply(
+            lambda row: row['ball'] / row['out'], axis=1
+        )
+
+        batsman_analysis['batting_avg'] = batsman_analysis['batting_avg'].round(2)
+        batsman_analysis['strike_rate'] = batsman_analysis['strike_rate'].round(2)
+        batsman_analysis['balls_per_dismissal'] = batsman_analysis['balls_per_dismissal'].round(2)
+        
+        st.write('Batsman Analysis:', batsman_analysis)
+
+        st.subheader(f'{selected_batsman.title()} vs Selected Bowling Kind(s)')
+        summary_df = batsman_filtered_df.groupby('bowl_kind').agg({
+            'batruns': 'sum',
+            'ball': 'count',
+            'out': 'sum'
+        }).reset_index()
+
+        summary_df['batting_avg'] = summary_df['batruns'] / summary_df['out']
+        summary_df['strike_rate'] = (summary_df['batruns'] / summary_df['ball']) * 100
+
+        summary_df['batting_avg'] = summary_df['batting_avg'].round(2)
+        summary_df['strike_rate'] = summary_df['strike_rate'].round(2)
+
+        st.write('Summary of Performance Against Selected Bowling Kinds:')
+        st.dataframe(summary_df[['bowl_kind', 'batting_avg', 'strike_rate', 'out']])
+
+        if activate_bowling_style_filter:
+            st.subheader(f'{selected_batsman.title()} vs Selected Bowling Style(s)')
+            style_summary_df = batsman_filtered_df.groupby('bowl_style').agg({
+                'batruns': 'sum',
+                'ball': 'count',
+                'out': 'sum'
+            }).reset_index()
+
+            style_summary_df['batting_avg'] = style_summary_df['batruns'] / style_summary_df['out']
+            style_summary_df['strike_rate'] = (style_summary_df['batruns'] / style_summary_df['ball']) * 100
+
+            style_summary_df['batting_avg'] = style_summary_df['batting_avg'].round(2)
+            style_summary_df['strike_rate'] = style_summary_df['strike_rate'].round(2)
+
+            st.write('Summary of Performance Against Selected Bowling Styles:')
+            st.dataframe(style_summary_df[['bowl_style', 'batting_avg', 'strike_rate', 'out']])at Hand for Shot Analysis", df['bat_hand'].unique(), key='bat_hand_shot_select_1')
 
     # Build the filter conditions
     filter_conditions = (df['ground'] == selected_ground_shot)
