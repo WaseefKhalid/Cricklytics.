@@ -25,7 +25,6 @@ st.set_page_config(
     initial_sidebar_state="auto",  # Optional: You can set the sidebar state
 )
 
-
 def home_section():
     st.markdown(
         """
@@ -37,8 +36,14 @@ def home_section():
             border-radius: 10px;
             font-family: Arial, sans-serif;
         }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+    st.markdown('<div class="blue-bg-white-text"><h1>Welcome to Cricklytics-Verse</h1></div>', unsafe_allow_html=True)
 
-def line_and_length():
+# Function for the Batsman SWOT analysis
+def batsman_swot():
     st.markdown(
         """
         <style>
@@ -58,83 +63,8 @@ def line_and_length():
     )
 
     # Title with blue background and yellow text
-    st.markdown('<div class="blue-bg-yellow-text"><h1>Bowling Line and Length Insights</h1></div>', unsafe_allow_html=True)
+    st.markdown('<div class="blue-bg-yellow-text"><h1>Batsman Strengths and Weaknesses</h1></div>', unsafe_allow_html=True)
 
-    # Ground Filter (now a multiselect, similar to Line and Length filters in the image)
-    selected_ground = st.multiselect('Select Ground', options=df['ground'].unique(), key='ground_select_line_length_1')
-
-    # Bowling Kind Filter with Activation
-    activate_bowling_kind_filter = st.checkbox('Activate Bowling Kind Filter', key='bowling_kind_filter_active_1')
-    selected_bowling_kind = None
-    if activate_bowling_kind_filter:
-        bowling_kind_options = df['bowl_kind'].unique()
-        selected_bowling_kind = st.multiselect('Select Bowling Kind', options=bowling_kind_options, key='bowling_kind_select_line_length_1')
-
-    # Bowling Style Filter with Activation
-    activate_bowling_style_filter = st.checkbox('Activate Bowling Style Filter', key='bowling_style_filter_active_1')
-    selected_bowling_style = None
-    if activate_bowling_style_filter:
-        bowling_style_options = df['bowl_style'].unique()
-        selected_bowling_style = st.multiselect('Select Bowling Style', options=bowling_style_options, key='bowling_style_select_line_length_1')
-
-    # Bat Hand Filter with Activation
-    activate_bat_hand_filter = st.checkbox('Activate Bat Hand Filter', key='bat_hand_filter_active_1')
-    selected_bat_hand = None
-    if activate_bat_hand_filter:
-        bat_hand_options = df['bat_hand'].unique()
-        selected_bat_hand = st.multiselect('Select Bat Hand', options=bat_hand_options, key='bat_hand_select_line_length_1')
-
-    # Filtering DataFrame based on selected filters
-    filter_conditions = pd.Series([True] * len(df))
-
-    if selected_ground:
-        filter_conditions &= df['ground'].isin(selected_ground)
-
-    if activate_bowling_kind_filter and selected_bowling_kind:
-        filter_conditions &= df['bowl_kind'].isin(selected_bowling_kind)
-
-    if activate_bowling_style_filter and selected_bowling_style:
-        filter_conditions &= df['bowl_style'].isin(selected_bowling_style)
-
-    if activate_bat_hand_filter and selected_bat_hand:
-        filter_conditions &= df['bat_hand'].isin(selected_bat_hand)
-
-    filtered_df = df[filter_conditions]
-
-    if filtered_df.empty:
-        st.error("No data available for the selected filters.")
-    else:
-        # Group by line and length instead of ground
-        bowling_analysis = filtered_df.groupby(['line', 'length']).agg({
-            'bowlruns': 'sum',
-            'ball': 'count',
-            'out': 'sum'
-        }).reset_index()
-
-        # Avoid division by zero or NaN
-        bowling_analysis['bowling_avg'] = bowling_analysis.apply(
-            lambda row: row['bowlruns'] / row['out'] if row['out'] > 0 else None, axis=1
-        )
-
-        bowling_analysis['economy_rate'] = bowling_analysis['bowlruns'] / (bowling_analysis['ball'] / 6)
-
-        bowling_analysis['bowling_sr'] = bowling_analysis.apply(
-            lambda row: row['ball'] / row['out'] if row['out'] > 0 else None, axis=1
-        )
-
-        bowling_analysis['bowling_avg'] = bowling_analysis['bowling_avg'].round(2)
-        bowling_analysis['economy_rate'] = bowling_analysis['economy_rate'].round(2)
-        bowling_analysis['bowling_sr'] = bowling_analysis['bowling_sr'].round(2)
-
-        # Drop the columns that are no longer necessary for display
-        bowling_analysis = bowling_analysis.drop(columns=['bowlruns', 'ball', 'out'])
-
-        st.write('Bowling Analysis:', bowling_analysis)
-
-
-def batsman_swot():
-    st.title("Batsman Strengths and Weaknesses")
-    
     # Create three columns with the middle one being wider
     col1, col2, col3 = st.columns([1, 2, 1])
 
@@ -249,265 +179,100 @@ def batsman_swot():
             st.write('Summary of Performance Against Selected Bowling Styles:')
             st.dataframe(style_summary_df[['bowl_style', 'batting_avg', 'strike_rate', 'out']])
 
-def toss_and_match_outcome_analysis():
-    st.title("Toss Impact on Match Results")
-    selected_ground = st.selectbox("Select Ground", options=df['ground'].unique(), key='ground_select')
+def line_and_length():
+    st.markdown(
+        """
+        <style>
+        .blue-bg-yellow-text {
+            background-color: #007BFF; /* Blue background */
+            color: #FFD700; /* Yellow text */
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .blue-bg-yellow-text h1 {
+            color: #FFD700 !important; /* Force yellow text */
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
-    team_filter_active = st.checkbox("Activate Team Filter", key='team_filter_active')
+    # Title with blue background and yellow text
+    st.markdown('<div class="blue-bg-yellow-text"><h1>Bowling Line and Length Insights</h1></div>', unsafe_allow_html=True)
 
-    selected_team = None
-    if team_filter_active:
-        team_options = df['toss'].unique()
-        selected_team = st.selectbox("Select Team", options=team_options, key='team_select')
+    # Ground Filter (now a multiselect, similar to Line and Length filters in the image)
+    selected_ground = st.multiselect('Select Ground', options=df['ground'].unique(), key='ground_select_line_length_1')
 
-    filtered_df = df[df['ground'] == selected_ground]
+    # Bowling Kind Filter with Activation
+    activate_bowling_kind_filter = st.checkbox('Activate Bowling Kind Filter', key='bowling_kind_filter_active_1')
+    selected_bowling_kind = None
+    if activate_bowling_kind_filter:
+        bowling_kind_options = df['bowl_kind'].unique()
+        selected_bowling_kind = st.multiselect('Select Bowling Kind', options=bowling_kind_options, key='bowling_kind_select_line_length_1')
 
-    if team_filter_active and selected_team:
-        filtered_df = filtered_df[filtered_df['toss'] == selected_team]
-
-    toss_win_and_match_win = filtered_df[filtered_df['toss'] == filtered_df['winner']].shape[0]
-    total_toss_wins = filtered_df.shape[0]
-    percentage_toss_win_match_win = (toss_win_and_match_win / total_toss_wins) * 100 if total_toss_wins > 0 else 0
-
-    batting_first_wins = filtered_df[(filtered_df['inns'] == 1) & (filtered_df['team_bat'] == filtered_df['winner'])].shape[0]
-    total_matches_batting_first = filtered_df[filtered_df['inns'] == 1].shape[0]
-    percentage_batting_first_win = (batting_first_wins / total_matches_batting_first) * 100 if total_matches_batting_first > 0 else 0
-
-    st.write(f"Percentage of times the team won the toss and won the match: {percentage_toss_win_match_win:.2f}%")
-    st.write(f"Percentage of times the team batting first won the match: {percentage_batting_first_win:.2f}%")
-    st.subheader("Bowling Analysis")
-
-    selected_bowling_kinds = st.multiselect("Select Bowling Kind", df['bowl_kind'].unique(), key='bowling_kind_select')
-
-    activate_bowling_style_filter = st.checkbox("Activate Bowling Style Filter", key='activate_bowling_style')
-
+    # Bowling Style Filter with Activation
+    activate_bowling_style_filter = st.checkbox('Activate Bowling Style Filter', key='bowling_style_filter_active_1')
+    selected_bowling_style = None
     if activate_bowling_style_filter:
-        selected_bowling_styles = st.multiselect("Select Bowling Style", df['bowl_style'].unique(), key='bowling_style_select')
-        filtered_bowling_df = filtered_df[
-            (filtered_df['bowl_kind'].isin(selected_bowling_kinds)) &
-            (filtered_df['bowl_style'].isin(selected_bowling_styles))
-        ]
-        bowling_analysis_group = ['bowl_kind', 'bowl_style']
-    else:
-        filtered_bowling_df = filtered_df[filtered_df['bowl_kind'].isin(selected_bowling_kinds)]
-        bowling_analysis_group = ['bowl_kind']
+        bowling_style_options = df['bowl_style'].unique()
+        selected_bowling_style = st.multiselect('Select Bowling Style', options=bowling_style_options, key='bowling_style_select_line_length_1')
 
-    if filtered_bowling_df.empty:
+    # Bat Hand Filter with Activation
+    activate_bat_hand_filter = st.checkbox('Activate Bat Hand Filter', key='bat_hand_filter_active_1')
+    selected_bat_hand = None
+    if activate_bat_hand_filter:
+        bat_hand_options = df['bat_hand'].unique()
+        selected_bat_hand = st.multiselect('Select Bat Hand', options=bat_hand_options, key='bat_hand_select_line_length_1')
+
+    # Filtering DataFrame based on selected filters
+    filter_conditions = pd.Series([True] * len(df))
+
+    if selected_ground:
+        filter_conditions &= df['ground'].isin(selected_ground)
+
+    if activate_bowling_kind_filter and selected_bowling_kind:
+        filter_conditions &= df['bowl_kind'].isin(selected_bowling_kind)
+
+    if activate_bowling_style_filter and selected_bowling_style:
+        filter_conditions &= df['bowl_style'].isin(selected_bowling_style)
+
+    if activate_bat_hand_filter and selected_bat_hand:
+        filter_conditions &= df['bat_hand'].isin(selected_bat_hand)
+
+    filtered_df = df[filter_conditions]
+
+    if filtered_df.empty:
         st.error("No data available for the selected filters.")
     else:
-        bowling_analysis = filtered_bowling_df.groupby(bowling_analysis_group).agg({
+        # Group by line and length instead of ground
+        bowling_analysis = filtered_df.groupby(['line', 'length']).agg({
             'bowlruns': 'sum',
             'ball': 'count',
             'out': 'sum'
         }).reset_index()
 
+        # Avoid division by zero or NaN
         bowling_analysis['bowling_avg'] = bowling_analysis.apply(
-            lambda row: row['bowlruns'] / row['out'], axis=1
+            lambda row: row['bowlruns'] / row['out'] if row['out'] > 0 else None, axis=1
         )
 
         bowling_analysis['economy_rate'] = bowling_analysis['bowlruns'] / (bowling_analysis['ball'] / 6)
 
         bowling_analysis['bowling_sr'] = bowling_analysis.apply(
-            lambda row: row['ball'] / row['out'], axis=1
+            lambda row: row['ball'] / row['out'] if row['out'] > 0 else None, axis=1
         )
 
         bowling_analysis['bowling_avg'] = bowling_analysis['bowling_avg'].round(2)
         bowling_analysis['economy_rate'] = bowling_analysis['economy_rate'].round(2)
         bowling_analysis['bowling_sr'] = bowling_analysis['bowling_sr'].round(2)
 
+        # Drop the columns that are no longer necessary for display
         bowling_analysis = bowling_analysis.drop(columns=['bowlruns', 'ball', 'out'])
 
         st.write('Bowling Analysis:', bowling_analysis)
 
-def batsman_profile_analysis():
-    filtered_df = df.groupby('bat').filter(lambda x: x['ball'].count() >= 300)
-
-    def determine_phase(ball_id):
-        if ball_id <= 6:
-            return 'Powerplay'
-        elif ball_id <= 15:
-            return 'Middle'
-        else:
-            return 'Death'
-
-    filtered_df['Phase'] = filtered_df['ball_id'].apply(determine_phase)
-
-    # Ensure 'Phase' is ordered correctly
-    phase_order = ['Powerplay', 'Middle', 'Death']
-    filtered_df['Phase'] = pd.Categorical(filtered_df['Phase'], categories=phase_order, ordered=True)
-
-    st.title("Batsman Profile Analysis")
-    search_term = st.text_input("Start typing the name of the batsman:")
-    filtered_batsmen = filtered_df['bat'].str.lower().unique()
-    filtered_suggestions = [bat for bat in filtered_batsmen if search_term.lower() in bat]
-    selected_batsman = st.selectbox("Select Batsman", options=filtered_suggestions, format_func=lambda x: x.title())
-
-    if selected_batsman:
-        # Apply selected batsman
-        batsman_name = selected_batsman.lower()
-
-        # Ground filter activation
-        activate_ground_filter = st.checkbox("Activate Ground Filter")
-        if activate_ground_filter:
-            selected_grounds = st.multiselect("Select Ground(s)", options=filtered_df['ground'].unique())
-            if selected_grounds:
-                filtered_df = filtered_df[filtered_df['ground'].isin(selected_grounds)]
-
-        # Bowling kind filter activation
-        activate_bowling_kind_filter = st.checkbox("Activate Bowling Kind Filter")
-        if activate_bowling_kind_filter:
-            selected_bowling_kinds = st.multiselect("Select Bowling Kind(s)", options=filtered_df['bowl_kind'].unique())
-            if selected_bowling_kinds:
-                filtered_df = filtered_df[filtered_df['bowl_kind'].isin(selected_bowling_kinds)]
-
-        # Bowling style filter activation
-        activate_bowling_style_filter = st.checkbox("Activate Bowling Style Filter")
-        if activate_bowling_style_filter:
-            selected_bowling_styles = st.multiselect("Select Bowling Style(s)", options=filtered_df['bowl_style'].unique())
-            if selected_bowling_styles:
-                filtered_df = filtered_df[filtered_df['bowl_style'].isin(selected_bowling_styles)]
-
-        def player_profile(batsman_name):
-            filtered_df['bat'] = filtered_df['bat'].str.lower()
-            player_df = filtered_df[filtered_df['bat'] == batsman_name]
-
-            if player_df.empty:
-                st.write(f"No data available for {batsman_name.title()} or the player has not faced 300 balls.")
-                return
-
-            # Calculate metrics
-            sr_phase_wise = player_df.groupby('Phase').apply(lambda x: (x['batruns'].sum() / x['ball'].count()) * 100).reset_index()
-            sr_phase_wise.columns = ['Phase', 'SR']
-            sr_phase_wise['SR'] = sr_phase_wise['SR'].round(2)
-
-            six_ratio_phase_wise = player_df.groupby('Phase').apply(lambda x: x['isSix'].sum() / x['ball'].count()).reset_index()
-            six_ratio_phase_wise.columns = ['Phase', 'Six Ratio']
-            six_ratio_phase_wise['Balls per Six'] = six_ratio_phase_wise.apply(lambda x: round(1 / x['Six Ratio'], 2) if x['Six Ratio'] > 0 else 0, axis=1)
-
-            four_ratio_phase_wise = player_df.groupby('Phase').apply(lambda x: x['isFour'].sum() / x['ball'].count()).reset_index()
-            four_ratio_phase_wise.columns = ['Phase', 'Four Ratio']
-            four_ratio_phase_wise['Balls per Four'] = four_ratio_phase_wise.apply(lambda x: round(1 / x['Four Ratio'], 2) if x['Four Ratio'] > 0 else 0, axis=1)
-
-            dot_ball_phase_wise = player_df.groupby('Phase').apply(lambda x: round((x['isDot'].sum() / x['ball'].count()) * 100, 2)).reset_index()
-            dot_ball_phase_wise.columns = ['Phase', 'Dot Ball %']
-
-            activity_runs_phase_wise = player_df.groupby('Phase').apply(lambda x: round((x['ActivityRuns'].sum() / x['batruns'].sum()) * 100, 2)).reset_index()
-            activity_runs_phase_wise.columns = ['Phase', 'Activity Runs %']
-
-            control_phase_wise = player_df.groupby('Phase').apply(lambda x: round((x['control'].sum() / x['ball'].count()) * 100, 2)).reset_index()
-            control_phase_wise.columns = ['Phase', 'Control %']
-
-            st.write(f"Player Profile: {batsman_name.title()}")
-
-            # Display the metrics side by side
-            col1, col2 = st.columns(2)
-
-            with col1:
-                st.write("### Strike Rate:")
-                st.table(sr_phase_wise)
-
-                st.write("### Balls per Six :")
-                st.table(six_ratio_phase_wise[['Phase', 'Balls per Six']])
-
-                st.write("### Balls per Four:")
-                st.table(four_ratio_phase_wise[['Phase', 'Balls per Four']])
-
-            with col2:
-                st.write("### Dot Ball Percentage:")
-                st.table(dot_ball_phase_wise)
-
-                st.write("### Percentage of Activity Runs):")
-                st.table(activity_runs_phase_wise)
-
-                st.write("### Control Percentage:")
-                st.table(control_phase_wise)
-
-        player_profile(batsman_name)
-
-# Assuming df is already loaded and available
-#batsman_profile_analysis()
-
-def bowler_profile_analysis():
-    filtered_df = df.groupby('bowl').filter(lambda x: x['ball'].count() >= 300)
-
-    def determine_phase(ball_id):
-        if ball_id <= 6:
-            return 'Powerplay'
-        elif ball_id <= 15:
-            return 'Middle'
-        else:
-            return 'Death'
-
-    filtered_df['Phase'] = filtered_df['ball_id'].apply(determine_phase)
-    filtered_df['bowl'] = filtered_df['bowl'].str.lower()
-
-    # Define the phase order
-    phase_order = ['Powerplay', 'Middle', 'Death']
-    filtered_df['Phase'] = pd.Categorical(filtered_df['Phase'], categories=phase_order, ordered=True)
-
-    st.title("Bowler Profile Analysis")
-    bowler_names = filtered_df['bowl'].str.title().unique()
-    bowler_name = st.selectbox("Enter or select the name of the bowler:", options=sorted(bowler_names))
-
-    if bowler_name:
-        # Apply the selected bowler name
-        bowler_name = bowler_name.lower()
-
-        # Ground filter activation (now placed after bowler selection)
-        activate_ground_filter = st.checkbox("Activate Ground Filter")
-        if activate_ground_filter:
-            selected_ground = st.selectbox("Select Ground", options=filtered_df['ground'].unique())
-            filtered_df = filtered_df[(filtered_df['ground'] == selected_ground) & (filtered_df['bowl'] == bowler_name)]
-
-        # Batting hand filter activation (now placed after bowler selection)
-        activate_bat_hand_filter = st.checkbox("Activate Batting Hand Filter")
-        if activate_bat_hand_filter:
-            selected_bat_hand = st.selectbox("Select Batting Hand", options=filtered_df['bat_hand'].unique())
-            filtered_df = filtered_df[(filtered_df['bat_hand'] == selected_bat_hand) & (filtered_df['bowl'] == bowler_name)]
-
-        def bowler_profile():
-            player_df = filtered_df[filtered_df['bowl'] == bowler_name]
-            
-            if player_df.empty:
-                st.write(f"No data available for {bowler_name.title()} or the player has not bowled 300 balls.")
-                return
-            
-            # Calculate metrics and round to two decimal places
-            economy_phase_wise = player_df.groupby('Phase').apply(lambda x: round(x['bowlruns'].sum() / (x['ball'].count() / 6), 2)).reset_index()
-            economy_phase_wise.columns = ['Phase', 'Economy Rate']
-            
-            bowling_avg_phase_wise = player_df.groupby('Phase').apply(lambda x: round(x['bowlruns'].sum() / x['out'].sum(), 2) if x['out'].sum() > 0 else 0).reset_index()
-            bowling_avg_phase_wise.columns = ['Phase', 'Bowling Avg']
-            
-            wickets_per_ball_phase_wise = player_df.groupby('Phase').apply(lambda x: round(x['ball'].count() / x['out'].sum(), 2) if x['out'].sum() > 0 else 0).reset_index()
-            wickets_per_ball_phase_wise.columns = ['Phase', 'Wickets per Ball']
-
-            non_control_percentage_phase_wise = player_df.groupby('Phase').apply(lambda x: round(((x['ball'].count() - x['control'].sum()) / x['ball'].count()) * 100, 2)).reset_index()
-            non_control_percentage_phase_wise.columns = ['Phase', 'Non-Control %']
-
-            # Display the analysis side by side
-            st.write(f"Bowler Profile: {bowler_name.title()}")
-
-            col1, col2 = st.columns(2)
-
-            with col1:
-                st.write("### Economy Rate:")
-                st.table(economy_phase_wise.sort_values('Phase'))
-
-                st.write("### Wickets per Ball:")
-                st.table(wickets_per_ball_phase_wise.sort_values('Phase'))
-
-            with col2:
-                st.write("### Bowling Average:")
-                st.table(bowling_avg_phase_wise.sort_values('Phase'))
-
-                st.write("### Non-Control Percentage:")
-                st.table(non_control_percentage_phase_wise.sort_values('Phase'))
-
-        bowler_profile()
-
-
-
+# CSS for sidebar radio buttons
 st.markdown(
     """
     <style>
@@ -585,4 +350,5 @@ elif analysis_type == "Player Batting Profiles":
     batsman_profile_analysis()
 elif analysis_type == "Player Bowling Profiles":
     bowler_profile_analysis()
+
 
