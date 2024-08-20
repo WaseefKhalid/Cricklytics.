@@ -43,21 +43,49 @@ def home_section():
         .blue-bg-white-text {
             background-color: #007BFF;
             color: white;
-            padding: 10px;
-            border-radius: 5px;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: Arial, sans-serif;
+        }
+        .cricklytics-title {
+            color: #FFD700; /* Gold color for Cricklytics */
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+        .separator {
+            height: 2px;
+            background-color: white;
+            margin: 20px 0;
+            border: none;
+        }
+        .content {
+            margin-top: 10px;
+            line-height: 1.6;
+            font-size: 1.2em;
+        }
+        .link-style {
+            color: #FFD700;
+            text-decoration: none;
+            font-weight: bold;
         }
         </style>
         """,
         unsafe_allow_html=True
     )
     
-    st.markdown('<div class="blue-bg-white-text"><h1>Welcome to Cricklytics</h1></div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="blue-bg-white-text">'
+        '<h1 class="cricklytics-title">Welcome to Cricklytics</h1>'
+        '<hr class="separator"/>'
+        '</div>',
+        unsafe_allow_html=True
+    )
 
     st.markdown(
         """
-        <div class="blue-bg-white-text">
+        <div class="blue-bg-white-text content">
         <p>
-        Hey cricket enthusiast, I am Waseef Khalid Khan. I have developed this Cricklytics to help the coaching staff, players, 
+        Hey cricket enthusiast, I am <strong>Waseef Khalid Khan</strong>. I have developed this <span class="cricklytics-title">Cricklytics</span> to help the coaching staff, players, 
         and cricket enthusiasts to know more about the game than the basic stats. You can check your favorite player's stats, 
         their strengths, and weaknesses here.
         </p>
@@ -67,7 +95,7 @@ def home_section():
 
     st.markdown(
         """
-        <div class="blue-bg-white-text">
+        <div class="blue-bg-white-text content">
         <p>
         This dashboard provides in-depth analysis of various aspects of cricket matches. 
         Use the sidebar to navigate between different analyses such as:
@@ -87,8 +115,8 @@ def home_section():
 
     st.markdown(
         """
-        <div class="blue-bg-white-text">
-        <p><strong>Developed by <a href="https://www.linkedin.com/in/waseef-khalid-khan-366951237" style="color:white;">Waseef Khalid Khan</a></strong></p>
+        <div class="blue-bg-white-text content">
+        <p><strong>Developed by <a href="https://www.linkedin.com/in/waseef-khalid-khan-366951237" class="link-style">Waseef Khalid Khan</a></strong></p>
         </div>
         """, unsafe_allow_html=True
     )
