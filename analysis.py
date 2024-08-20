@@ -697,4 +697,4 @@ elif analysis_type == "Player Batting Profiles":
     batsman_profile_analysis()
 elif analysis_type == "Player Bowling Profiles":
     bowler_profile_analysis()
-Explanation:
+
