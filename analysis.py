@@ -27,51 +27,59 @@ st.set_page_config(
 
 # The rest of your Streamlit app code
 
-def custom_sidebar():
-    st.markdown(
-        """
-        <style>
-        /* Sidebar container styling */
-        .sidebar .sidebar-content {
-            background-color: #2E2E2E;
-            padding: 10px;
-            border-radius: 10px;
-            font-family: Arial, sans-serif;
-        }
+st.markdown(
+    """
+    <style>
+    /* Sidebar container styling */
+    .sidebar .sidebar-content {
+        background-color: #2E2E2E;
+        padding: 10px;
+        border-radius: 10px;
+        font-family: Arial, sans-serif;
+    }
 
-        /* General link styling */
-        .sidebar .sidebar-content .menu-item {
-            background-color: #333;
-            color: white;
-            padding: 10px 15px;
-            margin-bottom: 5px;
-            border-radius: 5px;
-            font-weight: bold;
-            text-decoration: none;
-            display: block;
-            text-align: left;
-        }
+    /* General link styling */
+    .sidebar .sidebar-content .menu-item {
+        background-color: #333;
+        color: white;
+        padding: 10px 15px;
+        margin-bottom: 5px;
+        border-radius: 5px;
+        font-weight: bold;
+        text-decoration: none;
+        display: block;
+        text-align: left;
+    }
 
-        /* Hover effect */
-        .sidebar .sidebar-content .menu-item:hover {
-            background-color: #007BFF; /* Blue color on hover */
-            color: white;
-            cursor: pointer;
-        }
+    /* Hover effect */
+    .sidebar .sidebar-content .menu-item:hover {
+        background-color: #007BFF; /* Blue color on hover */
+        color: white;
+        cursor: pointer;
+    }
 
-        /* Active or selected item styling */
-        .sidebar .sidebar-content .menu-item.active {
-            background-color: #FF5733; /* Highlight active selection */
-            color: white;
-        }
+    /* Active or selected item styling */
+    .sidebar .sidebar-content .menu-item.active {
+        background-color: #FF5733; /* Highlight active selection */
+        color: white;
+    }
 
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
-# Call the function to render the custom sidebar
-custom_sidebar()
+# Sidebar with radio buttons for selecting the analysis type
+analysis_type = st.sidebar.radio("Choose the analysis", [
+    "Home",
+    "Best Shots by Ground",
+    "Bowling Line and Length Insights",
+    "Batsman Strengths and Weaknesses",
+    "Toss Impact on Match Results",
+    "Player Batting Profiles",
+    "Player Bowling Profiles"
+])
+
 
 def home_section():
     st.markdown(
@@ -667,18 +675,17 @@ def bowler_profile_analysis():
 
 
 
-# Execute the function based on user selection
-# if analysis_type == "Home":
-#     home_section()
-# elif analysis_type == "Best Shots by Ground":
-#     effective_shots_on_different_grounds()
-# elif analysis_type == "Bowling Line and Length Insights":
-#     line_and_length()
-# elif analysis_type == "Batsman Strengths and Weaknesses":
-#     batsman_swot()
-# elif analysis_type == "Toss Impact on Match Results":
-#     toss_and_match_outcome_analysis()
-# elif analysis_type == "Player Batting Profiles":
-#     batsman_profile_analysis()
-# elif analysis_type == "Player Bowling Profiles":
-#     bowler_profile_analysis()
+if analysis_type == "Home":
+    home_section()
+elif analysis_type == "Best Shots by Ground":
+    effective_shots_on_different_grounds()
+elif analysis_type == "Bowling Line and Length Insights":
+    line_and_length()
+elif analysis_type == "Batsman Strengths and Weaknesses":
+    batsman_swot()
+elif analysis_type == "Toss Impact on Match Results":
+    toss_and_match_outcome_analysis()
+elif analysis_type == "Player Batting Profiles":
+    batsman_profile_analysis()
+elif analysis_type == "Player Bowling Profiles":
+    bowler_profile_analysis()
