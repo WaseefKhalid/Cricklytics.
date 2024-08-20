@@ -97,13 +97,15 @@ def home_section():
         """, unsafe_allow_html=True
     )
 
-    st.markdown(
-        """
-        <div class="blue-bg-white-text content">
-        <p><strong>Developed by <span style="color: black;">Waseef Khalid Khan</span></strong></p>
-        </div>
-        """, unsafe_allow_html=True
-    )
+   st.markdown(
+    """
+    <div class="blue-bg-white-text content">
+    <p><strong>Developed by <a href="https://www.linkedin.com/in/waseef-khalid-khan-366951237" style="color: black;">Waseef Khalid Khan</a></strong></p>
+    </div>
+    """, 
+    unsafe_allow_html=True
+)
+
 def effective_shots_on_different_grounds():
     st.markdown(
         """
