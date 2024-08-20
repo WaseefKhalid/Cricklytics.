@@ -635,7 +635,8 @@ st.markdown(
         padding: 10px;
         margin-bottom: 8px;
         width: 100%;
-        display: block;
+        display: flex;  /* Use flexbox to align items */
+        align-items: center; /* Center align items */
         text-align: left;
         font-weight: bold;
         font-size: 16px;
