@@ -113,23 +113,64 @@ def home_section():
 
 # Define your analysis functions here
 def effective_shots_on_different_grounds():
-    st.title("Best Shots by Ground")
+    st.markdown(
+        """
+        <style>
+        .blue-bg-white-text {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .selectbox-container {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .checkbox-container {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Title with blue background and white text
+    st.markdown('<div class="blue-bg-white-text"><h1>Best Shots by Ground</h1></div>', unsafe_allow_html=True)
+
+    # Selectbox with blue background and white text
+    st.markdown('<div class="selectbox-container">', unsafe_allow_html=True)
     selected_ground_shot = st.selectbox("Select Ground for Shot Analysis", df['ground'].unique(), key='ground_shot_select_1')
+    st.markdown('</div>', unsafe_allow_html=True)
 
     # Bowling Kind Filter with Activation
+    st.markdown('<div class="checkbox-container">', unsafe_allow_html=True)
     activate_bowling_kind_filter_shot = st.checkbox("Activate Bowling Kind Filter for Shot Analysis", key='activate_bowling_kind_shot_1')
+    st.markdown('</div>', unsafe_allow_html=True)
     selected_bowling_kinds_shot = None
     if activate_bowling_kind_filter_shot:
         selected_bowling_kinds_shot = st.multiselect("Select Bowling Kind for Shot Analysis", df['bowl_kind'].unique(), key='bowling_kind_shot_select_1')
 
     # Bowling Style Filter with Activation
+    st.markdown('<div class="checkbox-container">', unsafe_allow_html=True)
     activate_bowling_style_filter_shot = st.checkbox("Activate Bowling Style Filter for Shot Analysis", key='activate_bowling_style_shot_1')
+    st.markdown('</div>', unsafe_allow_html=True)
     selected_bowling_styles_shot = None
     if activate_bowling_style_filter_shot:
         selected_bowling_styles_shot = st.multiselect("Select Bowling Style for Shot Analysis", df['bowl_style'].unique(), key='bowling_style_shot_select_1')
 
     # Bat Hand Filter with Activation
+    st.markdown('<div class="checkbox-container">', unsafe_allow_html=True)
     activate_bat_hand_filter_shot = st.checkbox("Activate Bat Hand Filter for Shot Analysis", key='activate_bat_hand_shot_1')
+    st.markdown('</div>', unsafe_allow_html=True)
     selected_bat_hand_shot = None
     if activate_bat_hand_filter_shot:
         selected_bat_hand_shot = st.multiselect("Select Bat Hand for Shot Analysis", df['bat_hand'].unique(), key='bat_hand_shot_select_1')
