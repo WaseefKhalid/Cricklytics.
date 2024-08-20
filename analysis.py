@@ -89,6 +89,7 @@ def home_section():
         </div>
         """, unsafe_allow_html=True
     )
+    st.write("**Developed by [Waseef Khalid Khan](https://www.linkedin.com/in/waseef-khalid-khan-366951237)**")
 
 
 def effective_shots_on_different_grounds():
