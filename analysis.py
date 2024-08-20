@@ -503,7 +503,131 @@ def toss_and_match_outcome_analysis():
         bowling_analysis = bowling_analysis.drop(columns=['bowlruns', 'ball', 'out'])
 
         st.write('Bowling Analysis:', bowling_analysis)
+def batsman_profile_analysis():
+    # CSS for blue background and yellow text
+    st.markdown(
+        """
+        <style>
+        .blue-bg-yellow-text {
+            background-color: #007BFF; /* Blue background */
+            color: #FFD700; /* Yellow text */
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .blue-bg-yellow-text h1 {
+            color: #FFD700 !important; /* Force yellow text */
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
+    # Title with blue background and yellow text
+    st.markdown('<div class="blue-bg-yellow-text"><h1>Batsman Profile Analysis</h1></div>', unsafe_allow_html=True)
+
+    filtered_df = df.groupby('bat').filter(lambda x: x['ball'].count() >= 300)
+
+    def determine_phase(ball_id):
+        if ball_id <= 6:
+            return 'Powerplay'
+        elif ball_id <= 15:
+            return 'Middle'
+        else:
+            return 'Death'
+
+    filtered_df['Phase'] = filtered_df['ball_id'].apply(determine_phase)
+
+    # Ensure 'Phase' is ordered correctly
+    phase_order = ['Powerplay', 'Middle', 'Death']
+    filtered_df['Phase'] = pd.Categorical(filtered_df['Phase'], categories=phase_order, ordered=True)
+
+    search_term = st.text_input("Start typing the name of the batsman:")
+    filtered_batsmen = filtered_df['bat'].str.lower().unique()
+    filtered_suggestions = [bat for bat in filtered_batsmen if search_term.lower() in bat]
+    selected_batsman = st.selectbox("Select Batsman", options=filtered_suggestions, format_func=lambda x: x.title())
+
+    if selected_batsman:
+        # Apply selected batsman
+        batsman_name = selected_batsman.lower()
+
+        # Ground filter activation
+        activate_ground_filter = st.checkbox("Activate Ground Filter")
+        if activate_ground_filter:
+            selected_grounds = st.multiselect("Select Ground(s)", options=filtered_df['ground'].unique())
+            if selected_grounds:
+                filtered_df = filtered_df[filtered_df['ground'].isin(selected_grounds)]
+
+        # Bowling kind filter activation
+        activate_bowling_kind_filter = st.checkbox("Activate Bowling Kind Filter")
+        if activate_bowling_kind_filter:
+            selected_bowling_kinds = st.multiselect("Select Bowling Kind(s)", options=filtered_df['bowl_kind'].unique())
+            if selected_bowling_kinds:
+                filtered_df = filtered_df[filtered_df['bowl_kind'].isin(selected_bowling_kinds)]
+
+        # Bowling style filter activation
+        activate_bowling_style_filter = st.checkbox("Activate Bowling Style Filter")
+        if activate_bowling_style_filter:
+            selected_bowling_styles = st.multiselect("Select Bowling Style(s)", options=filtered_df['bowl_style'].unique())
+            if selected_bowling_styles:
+                filtered_df = filtered_df[filtered_df['bowl_style'].isin(selected_bowling_styles)]
+
+        def player_profile(batsman_name):
+            filtered_df['bat'] = filtered_df['bat'].str.lower()
+            player_df = filtered_df[filtered_df['bat'] == batsman_name]
+
+            if player_df.empty:
+                st.write(f"No data available for {batsman_name.title()} or the player has not faced 300 balls.")
+                return
+
+            # Calculate metrics
+            sr_phase_wise = player_df.groupby('Phase').apply(lambda x: (x['batruns'].sum() / x['ball'].count()) * 100).reset_index()
+            sr_phase_wise.columns = ['Phase', 'SR']
+            sr_phase_wise['SR'] = sr_phase_wise['SR'].round(2)
+
+            six_ratio_phase_wise = player_df.groupby('Phase').apply(lambda x: x['isSix'].sum() / x['ball'].count()).reset_index()
+            six_ratio_phase_wise.columns = ['Phase', 'Six Ratio']
+            six_ratio_phase_wise['Balls per Six'] = six_ratio_phase_wise.apply(lambda x: round(1 / x['Six Ratio'], 2) if x['Six Ratio'] > 0 else 0, axis=1)
+
+            four_ratio_phase_wise = player_df.groupby('Phase').apply(lambda x: x['isFour'].sum() / x['ball'].count()).reset_index()
+            four_ratio_phase_wise.columns = ['Phase', 'Four Ratio']
+            four_ratio_phase_wise['Balls per Four'] = four_ratio_phase_wise.apply(lambda x: round(1 / x['Four Ratio'], 2) if x['Four Ratio'] > 0 else 0, axis=1)
+
+            dot_ball_phase_wise = player_df.groupby('Phase').apply(lambda x: round((x['isDot'].sum() / x['ball'].count()) * 100, 2)).reset_index()
+            dot_ball_phase_wise.columns = ['Phase', 'Dot Ball %']
+
+            activity_runs_phase_wise = player_df.groupby('Phase').apply(lambda x: round((x['ActivityRuns'].sum() / x['batruns'].sum()) * 100, 2)).reset_index()
+            activity_runs_phase_wise.columns = ['Phase', 'Activity Runs %']
+
+            control_phase_wise = player_df.groupby('Phase').apply(lambda x: round((x['control'].sum() / x['ball'].count()) * 100, 2)).reset_index()
+            control_phase_wise.columns = ['Phase', 'Control %']
+
+            st.write(f"Player Profile: {batsman_name.title()}")
+
+            # Display the metrics side by side
+            col1, col2 = st.columns(2)
+
+            with col1:
+                st.write("### Strike Rate:")
+                st.table(sr_phase_wise)
+
+                st.write("### Balls per Six :")
+                st.table(six_ratio_phase_wise[['Phase', 'Balls per Six']])
+
+                st.write("### Balls per Four:")
+                st.table(four_ratio_phase_wise[['Phase', 'Balls per Four']])
+
+            with col2:
+                st.write("### Dot Ball Percentage:")
+                st.table(dot_ball_phase_wise)
+
+                st.write("### Percentage of Activity Runs:")
+                st.table(activity_runs_phase_wise)
+
+                st.write("### Control Percentage:")
+                st.table(control_phase_wise)
+
+        player_profile(batsman_name)
 
 # CSS for sidebar radio buttons
 st.markdown(
