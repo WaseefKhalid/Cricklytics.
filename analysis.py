@@ -420,7 +420,7 @@ def toss_and_match_outcome_analysis():
         <style>
         .blue-bg-white-text {
             background-color: #007BFF; /* Blue background */
-            color: white; /* White text */
+            color: #FFD700; /* White text */
             padding: 10px;
             border-radius: 5px;
             font-weight: bold;
