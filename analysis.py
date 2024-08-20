@@ -653,15 +653,18 @@ st.markdown(
     .stRadio div[role=radiogroup] > label {
         width: 100%; /* Uniform width for all options */
     }
-    /* Replace the radio button with an arrow */
-    .stRadio div[role=radiogroup] > label > div {
-        visibility: hidden;
-    }
+    /* Add the arrow symbol before the text */
     .stRadio div[role=radiogroup] > label:before {
         content: "➔ "; /* Unicode arrow symbol */
         visibility: visible;
         margin-right: 10px;
         font-size: 18px;
+    }
+    /* Ensure the text is visible */
+    .stRadio div[role=radiogroup] > label > div {
+        display: flex;
+        align-items: center;
+        color: white; /* Ensure text is white */
     }
     </style>
     """,
@@ -694,3 +697,4 @@ elif analysis_type == "Player Batting Profiles":
     batsman_profile_analysis()
 elif analysis_type == "Player Bowling Profiles":
     bowler_profile_analysis()
+Explanation:
