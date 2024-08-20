@@ -413,7 +413,96 @@ def batsman_swot():
             st.write('Summary of Performance Against Selected Bowling Styles:')
             st.dataframe(style_summary_df[['bowl_style', 'batting_avg', 'strike_rate', 'out']])
 
+def toss_and_match_outcome_analysis():
+    # CSS for blue background and white text
+    st.markdown(
+        """
+        <style>
+        .blue-bg-white-text {
+            background-color: #007BFF; /* Blue background */
+            color: white; /* White text */
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .blue-bg-white-text h1 {
+            color: white !important; /* Force white text */
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
+    # Title with blue background and white text
+    st.markdown('<div class="blue-bg-white-text"><h1>Toss Impact on Match Results</h1></div>', unsafe_allow_html=True)
+
+    selected_ground = st.selectbox("Select Ground", options=df['ground'].unique(), key='ground_select')
+
+    team_filter_active = st.checkbox("Activate Team Filter", key='team_filter_active')
+
+    selected_team = None
+    if team_filter_active:
+        team_options = df['toss'].unique()
+        selected_team = st.selectbox("Select Team", options=team_options, key='team_select')
+
+    filtered_df = df[df['ground'] == selected_ground]
+
+    if team_filter_active and selected_team:
+        filtered_df = filtered_df[filtered_df['toss'] == selected_team]
+
+    toss_win_and_match_win = filtered_df[filtered_df['toss'] == filtered_df['winner']].shape[0]
+    total_toss_wins = filtered_df.shape[0]
+    percentage_toss_win_match_win = (toss_win_and_match_win / total_toss_wins) * 100 if total_toss_wins > 0 else 0
+
+    batting_first_wins = filtered_df[(filtered_df['inns'] == 1) & (filtered_df['team_bat'] == filtered_df['winner'])].shape[0]
+    total_matches_batting_first = filtered_df[filtered_df['inns'] == 1].shape[0]
+    percentage_batting_first_win = (batting_first_wins / total_matches_batting_first) * 100 if total_matches_batting_first > 0 else 0
+
+    st.write(f"Percentage of times the team won the toss and won the match: {percentage_toss_win_match_win:.2f}%")
+    st.write(f"Percentage of times the team batting first won the match: {percentage_batting_first_win:.2f}%")
+    st.subheader("Bowling Analysis")
+
+    selected_bowling_kinds = st.multiselect("Select Bowling Kind", df['bowl_kind'].unique(), key='bowling_kind_select')
+
+    activate_bowling_style_filter = st.checkbox("Activate Bowling Style Filter", key='activate_bowling_style')
+
+    if activate_bowling_style_filter:
+        selected_bowling_styles = st.multiselect("Select Bowling Style", df['bowl_style'].unique(), key='bowling_style_select')
+        filtered_bowling_df = filtered_df[
+            (filtered_df['bowl_kind'].isin(selected_bowling_kinds)) &
+            (filtered_df['bowl_style'].isin(selected_bowling_styles))
+        ]
+        bowling_analysis_group = ['bowl_kind', 'bowl_style']
+    else:
+        filtered_bowling_df = filtered_df[filtered_df['bowl_kind'].isin(selected_bowling_kinds)]
+        bowling_analysis_group = ['bowl_kind']
+
+    if filtered_bowling_df.empty:
+        st.error("No data available for the selected filters.")
+    else:
+        bowling_analysis = filtered_bowling_df.groupby(bowling_analysis_group).agg({
+            'bowlruns': 'sum',
+            'ball': 'count',
+            'out': 'sum'
+        }).reset_index()
+
+        bowling_analysis['bowling_avg'] = bowling_analysis.apply(
+            lambda row: row['bowlruns'] / row['out'], axis=1
+        )
+
+        bowling_analysis['economy_rate'] = bowling_analysis['bowlruns'] / (bowling_analysis['ball'] / 6)
+
+        bowling_analysis['bowling_sr'] = bowling_analysis.apply(
+            lambda row: row['ball'] / row['out'], axis=1
+        )
+
+        bowling_analysis['bowling_avg'] = bowling_analysis['bowling_avg'].round(2)
+        bowling_analysis['economy_rate'] = bowling_analysis['economy_rate'].round(2)
+        bowling_analysis['bowling_sr'] = bowling_analysis['bowling_sr'].round(2)
+
+        bowling_analysis = bowling_analysis.drop(columns=['bowlruns', 'ball', 'out'])
+
+        st.write('Bowling Analysis:', bowling_analysis)
 
 # CSS for sidebar radio buttons
 st.markdown(
