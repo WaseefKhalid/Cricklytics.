@@ -36,11 +36,74 @@ def home_section():
             border-radius: 10px;
             font-family: Arial, sans-serif;
         }
+        .cricklytics-title {
+            color: #FFD700; /* Gold color for Cricklytics */
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+        .separator {
+            height: 2px;
+            background-color: white;
+            margin: 20px 0;
+            border: none;
+        }
+        .content {
+            margin-top: 10px;
+            line-height: 1.6;
+            font-size: 1.2em;
+        }
         </style>
         """,
         unsafe_allow_html=True
     )
-    st.markdown('<div class="blue-bg-white-text"><h1>Welcome to Cricklytics-Verse</h1></div>', unsafe_allow_html=True)
+    
+    st.markdown(
+        '<div class="blue-bg-white-text">'
+        '<h1 class="cricklytics-title">Welcome to Cricklytics</h1>'
+        '<hr class="separator"/>'
+        '</div>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        """
+        <div class="blue-bg-white-text content">
+        <p>
+        Hey cricket enthusiast, I am <strong>Waseef Khalid Khan</strong>. I have developed this <span class="cricklytics-title">Cricklytics</span> to help the coaching staff, players, 
+        and cricket enthusiasts to know more about the game than the basic stats. You can check your favorite player's stats, 
+        their strengths, and weaknesses here.
+        </p>
+        </div>
+        """, unsafe_allow_html=True
+    )
+
+    st.markdown(
+        """
+        <div class="blue-bg-white-text content">
+        <p>
+        This dashboard provides in-depth analysis of various aspects of cricket matches. 
+        Use the sidebar to navigate between different analyses such as:
+        </p>
+        <ul>
+            <li>Best Shots by Ground</li>
+            <li>Batsman Strengths and Weaknesses</li>
+            <li>Toss Impact on Match Results</li>
+            <li>Toss and Match Outcome Analysis</li>
+            <li>Player Batting Profiles</li>
+            <li>Player Bowling Profile</li>
+        </ul>
+        <p>Select any section from the sidebar to get started!</p>
+        </div>
+        """, unsafe_allow_html=True
+    )
+
+    st.markdown(
+        """
+        <div class="blue-bg-white-text content">
+        <p><strong>Developed by <span style="color: black;">Waseef Khalid Khan</span></strong></p>
+        </div>
+        """, unsafe_allow_html=True
+    )
 
 # Function for the Batsman SWOT analysis
 def batsman_swot():
