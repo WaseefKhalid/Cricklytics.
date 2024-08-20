@@ -56,7 +56,13 @@ def home_section():
         """,
         unsafe_allow_html=True
     )
-    
+    st.markdown(
+        '<div class="blue-bg-white-text">'
+        '<h1 class="cricklytics-title">Welcome to Cricklytics</h1>'
+        '<hr class="separator"/>'
+        '</div>',
+        unsafe_allow_html=True
+    )
   
     st.markdown(
         """
