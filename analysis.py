@@ -104,6 +104,177 @@ def home_section():
         </div>
         """, unsafe_allow_html=True
     )
+def effective_shots_on_different_grounds():
+    st.markdown(
+        """
+        <style>
+        .blue-bg-yellow-text {
+            background-color: #007BFF; /* Blue background */
+            color: #FFD700; /* Yellow text */
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .blue-bg-yellow-text h1 {
+            color: #FFD700 !important; /* Force yellow text */
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Title with blue background and yellow text
+    st.markdown('<div class="blue-bg-yellow-text"><h1>Best Shots by Ground</h1></div>', unsafe_allow_html=True)
+
+    # Selectbox for ground selection
+    selected_ground_shot = st.selectbox("Select Ground for Shot Analysis", df['ground'].unique(), key='ground_shot_select_1')
+
+    # Bowling Kind Filter with Activation
+    activate_bowling_kind_filter_shot = st.checkbox("Activate Bowling Kind Filter for Shot Analysis", key='activate_bowling_kind_shot_1')
+    selected_bowling_kinds_shot = None
+    if activate_bowling_kind_filter_shot:
+        selected_bowling_kinds_shot = st.multiselect("Select Bowling Kind for Shot Analysis", df['bowl_kind'].unique(), key='bowling_kind_shot_select_1')
+
+    # Bowling Style Filter with Activation
+    activate_bowling_style_filter_shot = st.checkbox("Activate Bowling Style Filter for Shot Analysis", key='activate_bowling_style_shot_1')
+    selected_bowling_styles_shot = None
+    if activate_bowling_style_filter_shot:
+        selected_bowling_styles_shot = st.multiselect("Select Bowling Style for Shot Analysis", df['bowl_style'].unique(), key='bowling_style_shot_select_1')
+
+    # Bat Hand Filter with Activation
+    activate_bat_hand_filter_shot = st.checkbox("Activate Bat Hand Filter for Shot Analysis", key='activate_bat_hand_shot_1')
+    selected_bat_hand_shot = None
+    if activate_bat_hand_filter_shot:
+        selected_bat_hand_shot = st.multiselect("Select Bat Hand for Shot Analysis", df['bat_hand'].unique(), key='bat_hand_shot_select_1')
+
+    # Build the filter conditions
+    filter_conditions = (df['ground'] == selected_ground_shot)
+
+    if activate_bowling_kind_filter_shot and selected_bowling_kinds_shot:
+        filter_conditions &= df['bowl_kind'].isin(selected_bowling_kinds_shot)
+
+    if activate_bowling_style_filter_shot and selected_bowling_styles_shot:
+        filter_conditions &= df['bowl_style'].isin(selected_bowling_styles_shot)
+
+    if activate_bat_hand_filter_shot and selected_bat_hand_shot:
+        filter_conditions &= df['bat_hand'].isin(selected_bat_hand_shot)
+
+    filtered_df_shot = df[filter_conditions]
+
+    if filtered_df_shot.empty:
+        st.error("No data available for the selected filters.")
+    else:
+        avg_runs_per_shot = filtered_df_shot.groupby('shot')['batruns'].mean().reset_index()
+        avg_runs_per_shot = avg_runs_per_shot.sort_values(by='batruns', ascending=False)
+
+        dismissal_rate_per_shot = filtered_df_shot.groupby('shot')['out'].mean().reset_index()
+        dismissal_rate_per_shot['out'] = dismissal_rate_per_shot['out'] * 100
+
+        shot_analysis = pd.merge(avg_runs_per_shot, dismissal_rate_per_shot, on='shot')
+        shot_analysis.columns = ['shot', 'avg_runs', 'dismissal_rate']
+
+        shot_analysis = shot_analysis.sort_values(by='avg_runs', ascending=False)
+
+        st.subheader('Average Runs per Shot Type')
+        st.bar_chart(shot_analysis.set_index('shot')['avg_runs'], use_container_width=True)
+
+        st.subheader('Dismissal Rate per Shot Type (Percentage)')
+        st.bar_chart(shot_analysis.set_index('shot')['dismissal_rate'], use_container_width=True)
+
+def line_and_length():
+    st.markdown(
+        """
+        <style>
+        .blue-bg-yellow-text {
+            background-color: #007BFF; /* Blue background */
+            color: #FFD700; /* Yellow text */
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .blue-bg-yellow-text h1 {
+            color: #FFD700 !important; /* Force yellow text */
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Title with blue background and yellow text
+    st.markdown('<div class="blue-bg-yellow-text"><h1>Bowling Line and Length Insights</h1></div>', unsafe_allow_html=True)
+
+    # Ground Filter (now a multiselect, similar to Line and Length filters in the image)
+    selected_ground = st.multiselect('Select Ground', options=df['ground'].unique(), key='ground_select_line_length_1')
+
+    # Bowling Kind Filter with Activation
+    activate_bowling_kind_filter = st.checkbox('Activate Bowling Kind Filter', key='bowling_kind_filter_active_1')
+    selected_bowling_kind = None
+    if activate_bowling_kind_filter:
+        bowling_kind_options = df['bowl_kind'].unique()
+        selected_bowling_kind = st.multiselect('Select Bowling Kind', options=bowling_kind_options, key='bowling_kind_select_line_length_1')
+
+    # Bowling Style Filter with Activation
+    activate_bowling_style_filter = st.checkbox('Activate Bowling Style Filter', key='bowling_style_filter_active_1')
+    selected_bowling_style = None
+    if activate_bowling_style_filter:
+        bowling_style_options = df['bowl_style'].unique()
+        selected_bowling_style = st.multiselect('Select Bowling Style', options=bowling_style_options, key='bowling_style_select_line_length_1')
+
+    # Bat Hand Filter with Activation
+    activate_bat_hand_filter = st.checkbox('Activate Bat Hand Filter', key='bat_hand_filter_active_1')
+    selected_bat_hand = None
+    if activate_bat_hand_filter:
+        bat_hand_options = df['bat_hand'].unique()
+        selected_bat_hand = st.multiselect('Select Bat Hand', options=bat_hand_options, key='bat_hand_select_line_length_1')
+
+    # Filtering DataFrame based on selected filters
+    filter_conditions = pd.Series([True] * len(df))
+
+    if selected_ground:
+        filter_conditions &= df['ground'].isin(selected_ground)
+
+    if activate_bowling_kind_filter and selected_bowling_kind:
+        filter_conditions &= df['bowl_kind'].isin(selected_bowling_kind)
+
+    if activate_bowling_style_filter and selected_bowling_style:
+        filter_conditions &= df['bowl_style'].isin(selected_bowling_style)
+
+    if activate_bat_hand_filter and selected_bat_hand:
+        filter_conditions &= df['bat_hand'].isin(selected_bat_hand)
+
+    filtered_df = df[filter_conditions]
+
+    if filtered_df.empty:
+        st.error("No data available for the selected filters.")
+    else:
+        # Group by line and length instead of ground
+        bowling_analysis = filtered_df.groupby(['line', 'length']).agg({
+            'bowlruns': 'sum',
+            'ball': 'count',
+            'out': 'sum'
+        }).reset_index()
+
+        # Avoid division by zero or NaN
+        bowling_analysis['bowling_avg'] = bowling_analysis.apply(
+            lambda row: row['bowlruns'] / row['out'] if row['out'] > 0 else None, axis=1
+        )
+
+        bowling_analysis['economy_rate'] = bowling_analysis['bowlruns'] / (bowling_analysis['ball'] / 6)
+
+        bowling_analysis['bowling_sr'] = bowling_analysis.apply(
+            lambda row: row['ball'] / row['out'] if row['out'] > 0 else None, axis=1
+        )
+
+        bowling_analysis['bowling_avg'] = bowling_analysis['bowling_avg'].round(2)
+        bowling_analysis['economy_rate'] = bowling_analysis['economy_rate'].round(2)
+        bowling_analysis['bowling_sr'] = bowling_analysis['bowling_sr'].round(2)
+
+        # Drop the columns that are no longer necessary for display
+        bowling_analysis = bowling_analysis.drop(columns=['bowlruns', 'ball', 'out'])
+
+        st.write('Bowling Analysis:', bowling_analysis)
+
+
 
 # Function for the Batsman SWOT analysis
 def batsman_swot():
@@ -242,98 +413,7 @@ def batsman_swot():
             st.write('Summary of Performance Against Selected Bowling Styles:')
             st.dataframe(style_summary_df[['bowl_style', 'batting_avg', 'strike_rate', 'out']])
 
-def line_and_length():
-    st.markdown(
-        """
-        <style>
-        .blue-bg-yellow-text {
-            background-color: #007BFF; /* Blue background */
-            color: #FFD700; /* Yellow text */
-            padding: 10px;
-            border-radius: 5px;
-            font-weight: bold;
-        }
-        .blue-bg-yellow-text h1 {
-            color: #FFD700 !important; /* Force yellow text */
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
 
-    # Title with blue background and yellow text
-    st.markdown('<div class="blue-bg-yellow-text"><h1>Bowling Line and Length Insights</h1></div>', unsafe_allow_html=True)
-
-    # Ground Filter (now a multiselect, similar to Line and Length filters in the image)
-    selected_ground = st.multiselect('Select Ground', options=df['ground'].unique(), key='ground_select_line_length_1')
-
-    # Bowling Kind Filter with Activation
-    activate_bowling_kind_filter = st.checkbox('Activate Bowling Kind Filter', key='bowling_kind_filter_active_1')
-    selected_bowling_kind = None
-    if activate_bowling_kind_filter:
-        bowling_kind_options = df['bowl_kind'].unique()
-        selected_bowling_kind = st.multiselect('Select Bowling Kind', options=bowling_kind_options, key='bowling_kind_select_line_length_1')
-
-    # Bowling Style Filter with Activation
-    activate_bowling_style_filter = st.checkbox('Activate Bowling Style Filter', key='bowling_style_filter_active_1')
-    selected_bowling_style = None
-    if activate_bowling_style_filter:
-        bowling_style_options = df['bowl_style'].unique()
-        selected_bowling_style = st.multiselect('Select Bowling Style', options=bowling_style_options, key='bowling_style_select_line_length_1')
-
-    # Bat Hand Filter with Activation
-    activate_bat_hand_filter = st.checkbox('Activate Bat Hand Filter', key='bat_hand_filter_active_1')
-    selected_bat_hand = None
-    if activate_bat_hand_filter:
-        bat_hand_options = df['bat_hand'].unique()
-        selected_bat_hand = st.multiselect('Select Bat Hand', options=bat_hand_options, key='bat_hand_select_line_length_1')
-
-    # Filtering DataFrame based on selected filters
-    filter_conditions = pd.Series([True] * len(df))
-
-    if selected_ground:
-        filter_conditions &= df['ground'].isin(selected_ground)
-
-    if activate_bowling_kind_filter and selected_bowling_kind:
-        filter_conditions &= df['bowl_kind'].isin(selected_bowling_kind)
-
-    if activate_bowling_style_filter and selected_bowling_style:
-        filter_conditions &= df['bowl_style'].isin(selected_bowling_style)
-
-    if activate_bat_hand_filter and selected_bat_hand:
-        filter_conditions &= df['bat_hand'].isin(selected_bat_hand)
-
-    filtered_df = df[filter_conditions]
-
-    if filtered_df.empty:
-        st.error("No data available for the selected filters.")
-    else:
-        # Group by line and length instead of ground
-        bowling_analysis = filtered_df.groupby(['line', 'length']).agg({
-            'bowlruns': 'sum',
-            'ball': 'count',
-            'out': 'sum'
-        }).reset_index()
-
-        # Avoid division by zero or NaN
-        bowling_analysis['bowling_avg'] = bowling_analysis.apply(
-            lambda row: row['bowlruns'] / row['out'] if row['out'] > 0 else None, axis=1
-        )
-
-        bowling_analysis['economy_rate'] = bowling_analysis['bowlruns'] / (bowling_analysis['ball'] / 6)
-
-        bowling_analysis['bowling_sr'] = bowling_analysis.apply(
-            lambda row: row['ball'] / row['out'] if row['out'] > 0 else None, axis=1
-        )
-
-        bowling_analysis['bowling_avg'] = bowling_analysis['bowling_avg'].round(2)
-        bowling_analysis['economy_rate'] = bowling_analysis['economy_rate'].round(2)
-        bowling_analysis['bowling_sr'] = bowling_analysis['bowling_sr'].round(2)
-
-        # Drop the columns that are no longer necessary for display
-        bowling_analysis = bowling_analysis.drop(columns=['bowlruns', 'ball', 'out'])
-
-        st.write('Bowling Analysis:', bowling_analysis)
 
 # CSS for sidebar radio buttons
 st.markdown(
