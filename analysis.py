@@ -1,30 +1,17 @@
 import streamlit as st
 import pandas as pd
 import zipfile
-import os
-import requests
-from io import BytesIO
 import numpy as np
+import os
 
-# Function to download and unzip IPL data
-def download_and_unzip_data(url):
-    response = requests.get(url)
-    zip_file = BytesIO(response.content)
-    with zipfile.ZipFile(zip_file, 'r') as zip_ref:
-        zip_ref.extractall('ipl_data')
-    return os.path.join('ipl_data', 'ipl_data.csv')
+@st.cache_data
+def load_data():
+    if not os.path.exists("ipl_data"):
+        with zipfile.ZipFile("ipl_data.zip", "r") as zip_ref:
+            zip_ref.extractall("ipl_data")
+    return pd.read_csv("ipl_data/ipl_data.csv")
 
-# Load data
-csv_path = download_and_unzip_data('https://github.com/WaseefKhalid/Cricklytics/raw/main/ipl_data.zip?raw=true')
-df = pd.read_csv(csv_path)
-
-st.set_page_config(
-    page_title="Cricklytics-Verse",  # This sets the title of the tab in the browser
-    page_icon="🏏",  # Optional: You can set an icon for your app
-    layout="centered",  # Optional: You can set the layout ('centered' or 'wide')
-    initial_sidebar_state="auto",  # Optional: You can set the sidebar state
-)
-
+df = load_data()
 def home_section():
     st.markdown(
         """
